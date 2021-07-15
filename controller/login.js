@@ -33,7 +33,7 @@ const registerUser = async (firstname, lastname, email, password, role) => {
             }
         });
         var shrt_url;
-        shortUrl.short(`http://localhost:4200/active/${email}`, function (err, url) {
+        shortUrl.short(`https://hungry-ramanujan-4dc37e.netlify.app/active/${email}`, function (err, url) {
             shrt_url = url;
             //console.log(shrt_url);
             let info = mailer.sendMail({
@@ -52,18 +52,43 @@ const registerUser = async (firstname, lastname, email, password, role) => {
     } else {
         if (checkUser.status == false) {
             const hash = bcrypt.hashSync(password, saltRounds);
-            const updateData = User.updateOne({ email: email },
-                {
-                    firstname: firstname,
-                    lastname: lastname,
-                    email: email,
-                    password: hash,
-                    url: shrt_url,
-                    status: false
-                });
 
-            const data = { status: 200, msg: "user already exit, please activate your account", updateData };
-            resolve(data);
+            const mailer = nodemailer.createTransport({
+                name: 'gmail.com',
+                host: "smtp.gmail.com",
+                port: account.smtp.port,
+                secure: account.smtp.secure,
+                auth: {
+                    user: process.env.sender,
+                    pass: process.env.password
+                }
+            });
+            var shrt_url;
+            shortUrl.short(`https://hungry-ramanujan-4dc37e.netlify.app/active/${email}`, function (err, url) {
+                shrt_url = url;
+                //console.log(shrt_url);
+                let info = mailer.sendMail({
+                    from: process.env.sender,
+                    to: email, // list of receivers
+                    subject: "Account activation ✔", // Subject line
+                    text: "Account activation",  // plain text body
+                    html: `<a href= "${shrt_url}" >Click on this active account</a>`,
+                })
+
+                const updateData = User.updateOne({ email: email },
+                    {
+                        firstname: firstname,
+                        lastname: lastname,
+                        email: email,
+                        password: hash,
+                        url: shrt_url,
+                        status: false
+                    });
+    
+                const data = { status: 200, msg: "user already exit, please activate your account", updateData };
+                resolve(data);
+            });
+
         } else {
             const data = { status: 409, msg: "user already exit" };
             resolve(data);
@@ -127,10 +152,8 @@ const forgotPassword = async (email) => {
             to: checkEmail.email, // list of receivers
             subject: "Password Reset ✔", // Subject line
             text: "Password Reset Ramdom String",  // plain text body
-            html: `<a href="http://localhost:4200/reset/${email}/${string}">Click on this link</a>`,
+            html: `<a href="https://hungry-ramanujan-4dc37e.netlify.app/reset/${email}/${string}">Click on this link</a>`,
         });
-        console.log("------------->" +string);
-        console.log("=============>" +checkEmail.email);
         const updateString = await User.updateOne({ email: checkEmail.email }, {
             randomString: string
         });
