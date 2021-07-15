@@ -222,8 +222,8 @@ const searchJob = async (reqdata) => {
 }
 
 const searchPerfectJob = async (jobTitle, cmpnyCity) => {
-    //const jobdata = await Job.find({ jobTitle, cmpnyCity } ).exec();
-    const jobdata = await Job.find({ $or: [ { jobTitle: jobTitle } , { cmpnyCity: cmpnyCity } ] } ).exec();
+   
+    const jobdata = await Job.find({ $or: [ { 'cmpnyCity': { $regex: new RegExp(`^${cmpnyCity}$`), $options: 'i' } } , { 'jobTitle': { $regex: new RegExp(`^${jobTitle}$`), $options: 'i' } } ] } ).exec();
     
     return jobdata;
 }
