@@ -1,0 +1,33 @@
+pipeline:
+  identifier: Build_job_portal_backend_1695899994469
+  name: Build job-portal-backend
+  orgIdentifier: default
+  projectIdentifier: sample
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+        connectorRef: account.Github_OAuth_1695474878831
+        repoName: pallalarajasekar/job-portal-backend
+  stages:
+    - stage:
+        identifier: build
+        name: build
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  identifier: npminstall
+                  name: npm_install
+                  spec:
+                    command: npm install
+                  timeout: ""
+                  type: Run
+          platform:
+            arch: Amd64
+            os: Linux
+          runtime:
+            spec: {}
+            type: Cloud
+        type: CI
