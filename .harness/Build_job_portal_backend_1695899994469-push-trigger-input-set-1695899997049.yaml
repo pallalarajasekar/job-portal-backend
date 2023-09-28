@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_job_portal_backend_1695899994469-push-trigger-input-set
+  identifier: Build_job_portal_backend_1695899994469pushtriggerinputset
+  orgIdentifier: default
+  projectIdentifier: sample
+  pipeline:
+    identifier: Build_job_portal_backend_1695899994469
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
